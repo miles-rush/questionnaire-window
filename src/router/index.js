@@ -19,11 +19,21 @@ const router = createRouter({
             component: () => import('../components/List.vue')
         },
         {
-            path: '/hello',
-            name: 'Hello',
-            component: () => import('../components/HelloWorld.vue')
+            path: '/menu',
+            name: 'Menu',
+            component: () => import('../components/Menu.vue')
         },
-        { path: '/', redirect: { name: 'Hello' } }
+        {
+            path: '/config',
+            name: 'Config',
+            component: () => import('../components/Config.vue')
+        },
+        {
+            path: '/splite',
+            name: 'Splite',
+            component: () => import('../components/Splite.vue')
+        },
+        { path: '/', redirect: { name: 'Menu' } }
     ]
 })
 

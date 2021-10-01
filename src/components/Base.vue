@@ -82,19 +82,23 @@
 	  v-model="dialogVisible"
 	  width="50%"
 	>
-	  
+	  <div>桌面版请无视下列内容</div>
 	  <div>在使用前请先按照如下步骤进行设置</div>
 	  <div>1.建议使用谷歌浏览器</div>
 	  <div>2.在谷歌浏览器地址栏输入</div>
 	  <div>chrome://flags/#unsafely-treat-insecure-origin-as-secure</div>
 	  <div>3.回车跳转到设置页面</div>
 	  <div>
-		  <img src="../assets/cz.png" width="600"/>
+		  <el-image 
+		  
+		  :src="require('../assets/cz.png')"
+		  ></el-image>
+		  <!-- <img src="../assets/cz.png" width="600"/> -->
 		  <!-- <el-image src="../assets/cz.png"></el-image> -->
 	  </div>
 	  <div>4.如图位置添加:http://81.69.223.15:7913/</div>
 	  <div>5.重启浏览器完成设置</div>
-	  <div>TIP:在使用中遇到其他问题,请联系计算机楼A513实验室</div>
+	  <div>TIP:在使用中遇到其他问题,请联系开发人员</div>
 	  <template #footer>
 	    <span class="dialog-footer">
 	      <el-button @click="dialogVisible = false">取 消</el-button>

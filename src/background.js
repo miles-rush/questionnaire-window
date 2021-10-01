@@ -4,7 +4,8 @@ import {
 	app,
 	protocol,
 	BrowserWindow,
-	ipcMain
+	ipcMain,
+	shell
 } from 'electron'
 import {
 	createProtocol
@@ -13,6 +14,10 @@ import installExtension, {
 	VUEJS3_DEVTOOLS
 } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+// 本地存储
+const Store = require('electron-store')
+Store.initRenderer()
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{
@@ -23,11 +28,20 @@ protocol.registerSchemesAsPrivileged([{
 	}
 }])
 
+// const winURL = 'http://localhost:8080/'
+const winURL = process.env.NODE_ENV === 'development' ?
+	`http://localhost:8080` :
+	`file://${__dirname}/index.html`
+
+const show = process.env.NODE_ENV === 'development' ?
+	true : false
+
 async function createWindow() {
 	// Create the browser window.
 	const win = new BrowserWindow({
 		width: 800,
 		height: 600,
+		// fullscreen: true, // 默认全屏
 		webPreferences: {
 
 			// Use pluginOptions.nodeIntegration, leave this alone
@@ -46,6 +60,14 @@ async function createWindow() {
 		// Load the index.html when not in development
 		win.loadURL('app://./index.html')
 	}
+
+	// menu配置
+	if (!show) {
+		win.setMenu(null)
+	}
+
+	win.maximize()
+	
 }
 
 // Quit when all windows are closed.
@@ -93,14 +115,6 @@ if (isDevelopment) {
 	}
 }
 
-
-
-
-// const winURL = 'http://localhost:8080/'
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:8080`
-  : `file://${__dirname}/index.html`
-
 ipcMain.on("base", (event, arg) => {
 	let baseWindow;
 	baseWindow = new BrowserWindow({
@@ -115,4 +129,65 @@ ipcMain.on("base", (event, arg) => {
 	baseWindow.on("closed", () => {
 		baseWindow = null
 	})
+	// 开发模式下显示菜单 & 正常模式下不显示菜单
+	if (!show) {
+		baseWindow.setMenu(null)
+	}
+
+	baseWindow.maximize()
+
+})
+
+ipcMain.on("config", (event, arg) => {
+	let configWindow;
+	configWindow = new BrowserWindow({
+		width: 800,
+		height: 600,
+		webPreferences: {
+			enableRemoteModule: true,
+			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+		}
+	})
+	configWindow.loadURL(winURL + '#/config')
+	configWindow.on("closed", () => {
+		configWindow = null
+	})
+	// 开发模式下显示菜单 & 正常模式下不显示菜单
+	if (!show) {
+		configWindow.setMenu(null)
+	}
+
+	configWindow.maximize()
+
+})
+
+
+ipcMain.on("splite", (event, arg) => {
+	let spliteWindow;
+	spliteWindow = new BrowserWindow({
+		width: 800,
+		height: 600,
+		webPreferences: {
+			enableRemoteModule: true,
+			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+		}
+	})
+	spliteWindow.loadURL(winURL + '#/splite')
+	spliteWindow.on("closed", () => {
+		spliteWindow = null
+	})
+	// 开发模式下显示菜单 & 正常模式下不显示菜单
+	if (!show) {
+		spliteWindow.setMenu(null)
+	}
+
+	spliteWindow.maximize()
+
+})
+
+// 默认浏览器打开链接
+ipcMain.on('open-url', (event, url) => {
+	shell.openExternal(url);
 })
