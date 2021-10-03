@@ -26,7 +26,7 @@
 						<div>对保存的视频进行分割等.</div>
 					</el-collapse-item>
 					<el-collapse-item title="数据分析" name="4">
-						<el-link icon="el-icon-paperclip" type="info" @click="">数据分析</el-link>
+						<el-link icon="el-icon-paperclip" type="info" @click="showAnalyze()">数据分析</el-link>
 						<div>数据分析模块.</div>
 						<div>待开发.</div>
 					</el-collapse-item>
@@ -103,6 +103,9 @@ export default {
 			} else {
 				this.$message.error("请先配置视频分割路径和ffmpeg路径")
 			}
+		},
+		showAnalyze() {
+			ipcRenderer.send("chart")
 		},
 		openMy() {
 			ipcRenderer.send("open-url", 'https://mirrormoon.top/#/')

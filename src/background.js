@@ -187,6 +187,30 @@ ipcMain.on("splite", (event, arg) => {
 
 })
 
+ipcMain.on("chart", (event, arg) => {
+	let chartWindow;
+	chartWindow = new BrowserWindow({
+		width: 800,
+		height: 600,
+		webPreferences: {
+			enableRemoteModule: true,
+			nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+		}
+	})
+	chartWindow.loadURL(winURL + '#/chart')
+	chartWindow.on("closed", () => {
+		chartWindow = null
+	})
+	// 开发模式下显示菜单 & 正常模式下不显示菜单
+	if (!show) {
+		chartWindow.setMenu(null)
+	}
+
+	chartWindow.maximize()
+
+})
+
 // 默认浏览器打开链接
 ipcMain.on('open-url', (event, url) => {
 	shell.openExternal(url);

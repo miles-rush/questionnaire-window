@@ -5,7 +5,7 @@
                 <template #header>
                     <div class="card-header">
                         <span>视频剪辑</span>
-                        <el-button class="button" type="text">一键剪辑</el-button>
+                        <el-button class="button" type="text" @click="keyAllDone()">一键剪辑</el-button>
                     </div>
                 </template>
 
@@ -47,6 +47,18 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div style="margin-top:20px">
+                    <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[1, 5, 10, 20]"
+                    :page-size="size"
+                    layout="total, sizes, prev, pager, next"
+                    :total="total"
+                ></el-pagination>
+                </div>
+                
             </el-card>
         </div>
     </el-container>
@@ -78,12 +90,7 @@ Date.prototype.format = function (fmt) {
     }
     return fmt;
 }
-import { stat } from 'original-fs'
-const delay = (interval) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, interval)
-    })
-}
+
 const ffmpeg = require('fluent-ffmpeg')
 export default {
 
@@ -92,7 +99,10 @@ export default {
             saveFilePath: '',
             spliteFilePath: '',
             wholeData: null,
+            // 总文件目录
             files: null,
+            // 用于分页的文件目录
+            partFiles: [],
             tableList: [],
             fullscreenLoading: false,
             actionForm: {
@@ -100,16 +110,27 @@ export default {
                 input: null,
                 preOutput: null,
             },
+            total: 0,
+            currentPage: 1,
+            size: 5,
         }
     },
     created() {
         this.init()
     },
     methods: {
+        // 分页相关
+        handleSizeChange(val) {
+            this.size = val
+            this.renew()
+        },
+        handleCurrentChange(val) {
+            this.currentPage = val 
+            this.renew()
+        },
 
         async init() {
             this.read()
-
         },
         // 读取文件
         async readFile(pathName) {
@@ -123,6 +144,7 @@ export default {
                 (function iterator(i) {
                     if (i == files.length) {
                         that.files = dirs
+                        that.total = dirs.length
                         that.loadData()
                         console.log(dirs);
                         return;
@@ -152,8 +174,29 @@ export default {
         },
         // 表格数据初始化
         makeTable() {
-            for (let i = 0; i < this.files.length; i++) {
-                let videoName = this.files[i]
+            // files -> part files
+            let size = this.size // 每页的大小
+            let currentPage = this.currentPage //当前页
+            let s = size * (currentPage -1)
+            let e = currentPage * size - 1
+            // 清空partFiles
+            if(this.partFiles.length > 0) {
+                this.partFiles.splice(0, this.partFiles.length)
+            }
+            if(this.tableList.length > 0) {
+                this.tableList.splice(0, this.tableList.length)
+            }
+            
+            for(let i = s; i <= e; i++) {
+                if(i > this.files.length - 1) {
+                    continue
+                }
+                this.partFiles.push(this.files[i])
+                
+            }
+
+            for (let i = 0; i < this.partFiles.length; i++) {
+                let videoName = this.partFiles[i]
                 console.log('videoName', videoName)
                 // 取到无格式后缀的文件名
                 let input = this.saveFilePath + '\\' + videoName
@@ -372,6 +415,14 @@ export default {
                 //that.createSplite(i + 1)
                 // console.log('第几轮', i)
 
+            }
+        },
+        // 一键剪辑
+        keyAllDone() {
+            this.$message.error('一键剪辑存在内存爆炸问题，等待修复')
+            return
+            for(let i = 0; i < this.partFiles.length; i++) {
+                this.split(partFiles[i])
             }
         },
         // 刷新表格数据

@@ -10,9 +10,10 @@ import {Loading} from '@element-plus/icons'
 
 
 const app = createApp(App)
-
+// dev接口
 app.config.globalProperties.$url = 'http://81.69.223.15:7946/'
-
+// prod 接口
+// app.config.globalProperties.$url = 'http://81.69.223.15:7948/'
 
 app.component('Loading', Loading)
 

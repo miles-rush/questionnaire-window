@@ -33,6 +33,11 @@ const router = createRouter({
             name: 'Splite',
             component: () => import('../components/Splite.vue')
         },
+        {
+            path: '/chart',
+            name: 'Chart',
+            component: () => import('../components/Chart.vue')
+        },
         { path: '/', redirect: { name: 'Menu' } }
     ]
 })
