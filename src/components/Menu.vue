@@ -20,10 +20,15 @@
 						<div>在这里进行系统参数的配置.</div>
 						<div>在使用软件之前,请进行一次初始化配置.</div>
 					</el-collapse-item>
-					<el-collapse-item title="后期处理" name="3">
-						<el-link icon="el-icon-paperclip" type="warning" @click="showSplite()">视频分割</el-link>
+					<el-collapse-item title="视频处理" name="3">
+						<el-link icon="el-icon-paperclip" type="warning" @click="showSplite()">视频处理</el-link>
 						<div>在这里进行后期内容的处理.</div>
 						<div>对保存的视频进行分割等.</div>
+					</el-collapse-item>
+					<el-collapse-item title="数据分析" name="4">
+						<el-link icon="el-icon-paperclip" type="info" @click="">数据分析</el-link>
+						<div>数据分析模块.</div>
+						<div>待开发.</div>
 					</el-collapse-item>
 				</el-collapse>
 			</el-card>
@@ -91,11 +96,12 @@ export default {
 		},
 		showSplite() {
 			let path = store.get('spliteFilePath')
+			let ffmepgPath = store.get('ffmepgPath')
 			
-			if (path) {
+			if (path && ffmepgPath) {
 				ipcRenderer.send("splite")
 			} else {
-				this.$message.error("请先配置视频分割路径")
+				this.$message.error("请先配置视频分割路径和ffmpeg路径")
 			}
 		},
 		openMy() {

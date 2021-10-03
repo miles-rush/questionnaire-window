@@ -33,6 +33,17 @@
                         </el-col>
                     </el-row>
                 </div>
+                <el-divider>ffmpeg二进制文件路径</el-divider>
+                <div class="atom">
+                    <el-row>
+                        <el-col :span="18">
+                            <el-input v-model="ffmepgPath"></el-input>
+                        </el-col>
+                        <el-col :span="5" :offset="1">
+                            <el-button type="primary" @click="chooseFfmpegFilePath()">选择</el-button>
+                        </el-col>
+                    </el-row>
+                </div>
             </el-card>
         </div>
     </el-container>
@@ -48,7 +59,7 @@ export default {
         return {
             saveFilePath: '',
             spliteFilePath: '',
-
+            ffmepgPath: '',
         }
     },
     created() {
@@ -92,9 +103,27 @@ export default {
                 }
             })
         },
+        chooseFfmpegFilePath() {
+            dialog.showOpenDialog({
+                properties: [
+                    'openFile'
+                ]
+            }).then(result => {
+                console.log(result)
+                if (result) {
+                    this.ffmepgPath = result.filePaths[0]
+                    // 保存配置信息到本地
+                    if (this.ffmepgPath) {
+                        store.set('ffmepgPath', this.ffmepgPath)
+                        this.$message.success('保存配置成功');
+                    }
+                }
+            })
+        },
         read() {
             this.saveFilePath = store.get('saveFilePath')
             this.spliteFilePath = store.get('spliteFilePath')
+            this.ffmepgPath = store.get('ffmepgPath')
             this.$message.success('读取本地配置成功');
         }
     }
