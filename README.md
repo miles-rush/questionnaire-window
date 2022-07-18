@@ -1,5 +1,5 @@
 # questionnaire-window
- 使用vue3+electron13重构单机问卷系统
+ 使用vue3+electron13重构 基于视频模态的抑郁症识别数据采集系统
 
 ![1657089288863](https://user-images.githubusercontent.com/32055007/177484568-2f370f4e-9c71-4241-afd1-4ecf58794853.png)
 
